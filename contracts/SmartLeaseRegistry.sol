@@ -26,17 +26,6 @@ contract SmartLeaseRegistry {
 }
 
 contract SmartLeaseContract {
-    // scheduling payments thru the smart contract
-    // incorporating DAO into the contract
-    // state of unsigned
-    // state of tenant transition
-    // contract to specify 0x....tenants[0] etc. confirming that these tenants are handled properly
-    // for this reason the landlord proposes it, but only the tenant can sign it (& that's where it kicks in)
-    // transfering the tenancy to somebody else
-    // tenant leaves w/ a 30 day notice (perhaps make it only possible during a 5-day windowd at the beggining of the month)
-
-    // think of a way to model deposit
-    // is there a way to invest the deposit (?)
 
     event WrittenContractProposed(uint timestamp, string ipfsHash);
     event TenantAssigned(uint timestamp, address tenantAddress, uint rentAmount, uint depositAmount);
