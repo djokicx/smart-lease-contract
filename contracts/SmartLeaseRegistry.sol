@@ -1,6 +1,42 @@
+
 pragma solidity ^0.5.0;
 
+contract SmartLeaseRegistry {
+
+    event LeaseContractCreated(uint timestamp, address newLeaseContractAddress, address landlord, uint8 capacity);
+    address[] contracts;
+
+    function createLease(uint8 _capacity) public {
+
+        address newLeaseContract = address(new SmartLeaseContract(msg.sender, _capacity));
+        contracts.push(newLeaseContract);
+        
+        emit LeaseContractCreated(block.timestamp, newLeaseContract, msg.sender, _capacity);
+    }
+
+    function getLeases() external view returns (address[] memory) {
+        return contracts;
+    }
+
+    function getNumLeases() external view returns (uint) {
+        return contracts.length;
+    }
+
+
+}
+
 contract SmartLeaseContract {
+    // scheduling payments thru the smart contract
+    // incorporating DAO into the contract
+    // state of unsigned
+    // state of tenant transition
+    // contract to specify 0x....tenants[0] etc. confirming that these tenants are handled properly
+    // for this reason the landlord proposes it, but only the tenant can sign it (& that's where it kicks in)
+    // transfering the tenancy to somebody else
+    // tenant leaves w/ a 30 day notice (perhaps make it only possible during a 5-day windowd at the beggining of the month)
+
+    // think of a way to model deposit
+    // is there a way to invest the deposit (?)
 
     event WrittenContractProposed(uint timestamp, string ipfsHash);
     event TenantAssigned(uint timestamp, address tenantAddress, uint rentAmount, uint depositAmount);
@@ -26,12 +62,11 @@ contract SmartLeaseContract {
 
     uint deposit;
     uint8 public TENANT_CAPACITY;
-    
 
     // inheritance would be an issue with external constructors
-    constructor(uint8 _capacity) public {
-        require(msg.sender != address(0), "Landlord address must not be zero!");
-        landlordAddress = msg.sender;
+    constructor(address payable _landlordAddress, uint8 _capacity) public {
+        require(_landlordAddress != address(0), "Landlord address must not be zero!");
+        landlordAddress = _landlordAddress;
 
         TENANT_CAPACITY = _capacity;
     }
