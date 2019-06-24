@@ -1,7 +1,7 @@
-const SmartLeaseContract = artifacts.require("SmartLeaseContract");
+const SmartLeaseRegistry = artifacts.require("SmartLeaseRegistry");
 
-const tenantCapacity = require("../config.js").tenantCapacity;
+// const tenantCapacity = require("../config.js").tenantCapacity;
 
 module.exports = function(deployer) {
-  deployer.deploy(SmartLeaseContract, tenantCapacity);
+  deployer.deploy(SmartLeaseRegistry);
 };

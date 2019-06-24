@@ -1,15 +1,39 @@
 var SmartLeaseContract = artifacts.require("./SmartLeaseContract.sol");
+var SmartLeaseRegistry = artifacts.require("./SmartLeaseRegistry.sol");
 
-contract('SmartLeaseContract', function(accounts) {
+contract('SmartLeaseRegistry', function(accounts) {
+    let contractRegistry;
     let contractInstance;
-    
+    let contractInstanceAddress;
 
-    it('initializes with three tenants', function() {
-        return SmartLeaseContract.deployed().then(function(instance) {
+    it('registry deployes an instance of a smart lease', function() {
+        return SmartLeaseRegistry.deployed().then(function(instance) {
+            contractRegistry = instance;
+            return contractRegistry.createLease(3);
+        }).then(function(receipt) {
+            assert.equal(receipt.logs[0].event, "LeaseContractCreated");
+            contractInstanceAddress = receipt.logs[0].args[1];
+        });
+    });
+
+    it('registry contains exactly ONE instance of a smart lease', function() {
+            contractRegistry.getNumLeases().then(function(leaseCount) {
+            assert.equal(leaseCount, 1);
+        });
+    });
+
+    it('contract initialized with correct number of tenants', function() {
+        return SmartLeaseContract.at(contractInstanceAddress).then(function(instance) {
             contractInstance = instance;
             return contractInstance.TENANT_CAPACITY();
         }).then(function(capacity) {
             assert.equal(capacity, 3);
+        });
+    });
+
+    it('assigns the correct landlord', function() {
+        return contractInstance.landlordAddress().then(function(landlordAddress) {
+            assert.equal(landlordAddress, accounts[0]);
         });
     });
 
@@ -124,4 +148,6 @@ contract('SmartLeaseContract', function(accounts) {
             assert.equal(e.reason,"Tenant must sign the contract before invoking this functionality");
         })
     });
-})
+});
+
+
